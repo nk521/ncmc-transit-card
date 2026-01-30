@@ -34,3 +34,7 @@
 ## Problems
 
 1. GP Secure Channel Protocol (SCP) is set to 02 which is deprecated by Global Platform because of deterministic encryption. 3DES in CBC with fixed IV of zeroes. Plaintext recovery attack is possible.
+
+## Offline data & The transit card side of NCMC
+
+I'll fill this once I actually get a card in hand. I'll try to relay info because HCE should be possible with the current card arch.
