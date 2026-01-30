@@ -29,3 +29,8 @@
    3. Block `87 01 01` sets this AID as the default payment application on this card. (Priority set to 1)
 2. Default selected AID: `6F 10 A5 04 9F 65 01 FF 84 08 A0 00 00 01 51 00 00 00` | `o....e........Q...` |
    1. Default AID is not Rupay. It's `Global Platform card manager`. Version `2.2.1`. ([GPC Card Spec, Page 325, Sec H.1.3](https://globalplatform.org/wp-content/uploads/2018/05/GPC_CardSpecification_v2.3.1_PublicRelease_CC.pdf))
+
+
+## Problems
+
+1. GP Secure Channel Protocol (SCP) is set to 02 which is deprecated by Global Platform because of deterministic encryption. 3DES in CBC with fixed IV of zeroes. Plaintext recovery attack is possible.
