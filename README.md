@@ -49,11 +49,31 @@ The app has some restrictions on rooted phone and developer mode. The method tha
 ```js
 var MainActivity = Java.use("com.pinelabs.bharatyatra.MainActivity");
 MainActivity["checkDeviceSecurity"].implementation = function () {
-    // True == don't run the app
-    // False == everything good.
-    return false;
+   // True == don't run the app
+   // False == everything good.
+   return false;
 };
 ```
+
+To target patching, there's a hash check function. Here's a bypass for it -- 
+
+```js
+var MainActivity = Java.use("com.pinelabs.bharatyatra.MainActivity");
+MainActivity["verifyAppSignature"].implementation = function () {
+   return true;
+};
+```
+
+There's a google play api check as well. Bypass --
+
+```js
+var GoogleApiAvailability = Java.use("com.google.android.gms.common.GoogleApiAvailability");
+GoogleApiAvailability["isGooglePlayServicesAvailable"].overload('android.content.Context').implementation = function (context) {
+   return 0;
+};
+```
+
+Note that the activity `com.pinelabs.bharatyatra.MainActivity` also handles offline balance queries / top-up from the card.
 
 
 ## Offline data & The transit card side of NCMC
