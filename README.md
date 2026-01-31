@@ -73,6 +73,15 @@ GoogleApiAvailability["isGooglePlayServicesAvailable"].overload('android.content
 };
 ```
 
+And a nail to the head will be to just get rid of tampering alert message.
+
+```js
+var MainActivity = Java.use("com.pinelabs.bharatyatra.MainActivity");
+MainActivity["showTamperingAlert"].implementation = function () {
+   return;
+};
+```
+
 Note that the activity `com.pinelabs.bharatyatra.MainActivity` also handles offline balance queries / top-up from the card.
 
 
