@@ -8,7 +8,7 @@
 1. Very similar to Suica. But, why no HCE emulation via IOS/Android ?
 2. PPSE is present. So there should be multiple AIDs present in card. (similar to KochiOne cards).
 
-## Example readings
+## General Reading (off of blinkit | same as Airtel's)
 
 #### Meta about protocol
 
@@ -30,10 +30,31 @@
 2. Default selected AID: `6F 10 A5 04 9F 65 01 FF 84 08 A0 00 00 01 51 00 00 00` | `o....e........Q...` |
    1. Default AID is not Rupay. It's `Global Platform card manager`. Version `2.2.1`. ([GPC Card Spec, Page 325, Sec H.1.3](https://globalplatform.org/wp-content/uploads/2018/05/GPC_CardSpecification_v2.3.1_PublicRelease_CC.pdf))
 
+#### Other info
+
+Upon further scanning, the card itself also emulates MiFare Plus card (SL3).
 
 ## Problems
 
 1. GP Secure Channel Protocol (SCP) is set to 02 which is deprecated by Global Platform because of deterministic encryption. 3DES in CBC with fixed IV of zeroes. Plaintext recovery attack is possible.
+
+## The app
+
+Made with flutter. Relies on [flutter-nfc-manager](https://github.com/okadan/flutter-nfc-manager) for NFC related stuff. The system bindings are done via pigeon and the header file for that is located [here](https://github.com/okadan/flutter-nfc-manager/blob/main/pigeon/android.dart). 
+
+One of the things can be to now set hooks or patch all the functions defined in the header to log out the APDU commands and their responses. This could also mean that a patch for the app should be enough to increase, let's say, the money field right before a top-up APDU is being sent. Though it'll be encrypted, I think.
+
+The app has some restrictions on rooted phone and developer mode. The method that takes care of it is located on the kotlin side. Here's a frida snippet to fix it -- 
+
+```js
+var MainActivity = Java.use("com.pinelabs.bharatyatra.MainActivity");
+MainActivity["checkDeviceSecurity"].implementation = function () {
+    // True == don't run the app
+    // False == everything good.
+    return false;
+};
+```
+
 
 ## Offline data & The transit card side of NCMC
 
