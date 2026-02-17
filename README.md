@@ -122,6 +122,54 @@ Memory.patchCode(jmp, 4, code => {
 
 And, finally, we are in.
 
+But. BUT. ccavenue (ccavenue handles pre-NFC based stuff in this app. Everything is a transaction.) has more checks for the app being hooked. This can be confirmed by killing frida-server moments before clicking on "check balance". This is tricky but I'll handle another frida checking utility that this app uses - [jailbreak_root_detection](https://github.com/w3connext/jailbreak_root_detection/). On android the checks are pretty simple - 
+
+```dart
+final isNotTrust = await JailbreakRootDetection.instance.isNotTrust;
+final isJailBroken = await JailbreakRootDetection.instance.isJailBroken;
+final isRealDevice = await JailbreakRootDetection.instance.isRealDevice;
+final isOnExternalStorage = await JailbreakRootDetection.instance.isOnExternalStorage;
+final checkForIssues = await JailbreakRootDetection.instance.checkForIssues;
+final isDevMode = await JailbreakRootDetection.instance.isDevMode;
+```
+
+Compiled app will have a `onMethodCall` method that handles this flutter <-> native bridge. We can hook the functions it calls inside --
+
+```js
+var Companion = Java.use("com.w3conext.jailbreak_root_detection.frida.AntiFridaChecker$Companion");
+Companion["checkFrida"].implementation = function () {
+    return false;
+};
+var MagiskChecker = Java.use("com.w3conext.jailbreak_root_detection.magisk.MagiskChecker");
+MagiskChecker["isInstalled"].implementation = function () {
+    return false;
+};
+var EmulatorCheck = Java.use("com.anish.trust_fall.emulator.EmulatorCheck");
+EmulatorCheck["isEmulator"].implementation = function () {
+    return false;
+};
+var Debugger = Java.use("com.w3conext.jailbreak_root_detection.debuger.Debugger");
+Debugger["isDebugged"].implementation = function (context) {
+   return false;
+};
+var RootedCheck = Java.use("com.anish.trust_fall.rooted.RootedCheck");
+RootedCheck["isJailBroken"].implementation = function (context) {
+   return false;
+};
+var DevMode = Java.use("com.w3conext.jailbreak_root_detection.devmode.DevMode");
+DevMode["isDevMode"].implementation = function (activity) {
+   return false;
+};
+```
+
+Let's now handle ccavenue's checks for frida. Let's think from their perspective --
+
+1. Frida server is normally stored in `/data/local/tmp` with the name `frida` or `frida-server`.
+2. Default ports are 27042 & 27043.
+3. And things mentioned [here](https://nullptr.icu/index.php/archives/182/)
+
+First two are easy bypasses. For the things mentioned in the last one, it's simple-r to just [compile our own kernel](https://github.com/nk521/lineageos_avicii_kernel_frida_patches) (WIP).
+
 
 ## Offline data & The transit card side of NCMC
 
