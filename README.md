@@ -1,6 +1,11 @@
 # Transit card notes
 
 > [!NOTE]
+> I've fully reverse engineered the NCMC specification using a really different approach. The full writeup is available on my blog - https://nkmason.dev/posts/reversing-ncmc-spec-bug-tools/.
+> 
+> If you want to ask doubts, please feel free to email me @ nk_mason@protonmail.com.
+
+> [!NOTE]
 > Please do not send MRs. Issues are alright.
 
 ## Initial observations
